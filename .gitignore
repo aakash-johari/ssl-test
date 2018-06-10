@@ -1,0 +1,5 @@
+.idea/
+SecureWebApplication.iml
+target/
+lib/
+consul/.vagrant

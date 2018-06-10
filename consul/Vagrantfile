@@ -1,0 +1,24 @@
+vms = [
+  { :ip => "192.168.1.5", :name => "consul1", :port => "10122" },
+  { :ip => "192.168.1.6", :name => "consul2", :port => "10123" },
+  { :ip => "192.168.1.7", :name => "consul3", :port => "10124" }]
+
+Vagrant.configure("2") do |config|
+  vms.each do |vm|
+    config.vm.define vm[:name] do |vmbox|
+      vmbox.vm.box = "ubuntu/precise64"
+      vmbox.vm.hostname = vm[:name]
+      vmbox.vm.box_url = "ubuntu/precise64"
+
+      vmbox.vm.network :private_network, ip: vm[:ip]
+      vmbox.vm.network :forwarded_port, guest: 22, host: vm[:port], id: "ssh"
+
+
+      vmbox.vm.provider :virtualbox do |v|
+        v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        v.customize ["modifyvm", :id, "--memory", 1024]
+        v.customize ["modifyvm", :id, "--name", vm[:name]]
+      end
+    end
+  end
+end
